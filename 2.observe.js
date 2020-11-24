@@ -29,6 +29,10 @@ function observe(obj) {
   })
 }
 
+function set(obj, key, val) {
+  defineReactive(obj, key, val)
+}
+
 let obj = { 
   a: 1,
   b: 2,
@@ -45,3 +49,6 @@ obj.b = 2222
 obj.c.foo = 100000
 obj.d = { bar: 99999 }
 obj.d.bar = 8888888
+
+set(obj, 'e', 777)
+obj.e = 7777777777

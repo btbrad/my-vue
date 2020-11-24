@@ -2,7 +2,11 @@ class MyVue{
   constructor(options) {
     this.$options = options
     this.$data = options.data
+
+    // 数据响应式
     observe(this.$data)
+    // 代理
+    proxy(this, '$data')
   }
 }
 
@@ -24,6 +28,22 @@ function defineReactive(obj, key, val) {
         console.log('set ' + val)
       }
     }
+  })
+}
+
+// 数据代理
+function proxy(obj, sourceKey) {
+  Object.keys(obj[sourceKey]).forEach(key => {
+    Object.defineProperty(obj, key, {
+      enumerable: true,
+      configurable: true,
+      get() {
+        return obj[sourceKey][key]
+      },
+      set(newVal) {
+        obj[sourceKey][key] = newVal
+      }
+    })
   })
 }
 

@@ -7,6 +7,8 @@ class MyVue{
     observe(this.$data)
     // 代理
     proxy(this, '$data')
+    // 编译模板
+    new Compile(this.$options.el, this)
   }
 }
 

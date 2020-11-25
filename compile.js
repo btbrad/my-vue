@@ -54,4 +54,8 @@ class Compile {
   text(node, exp) {
     node.textContent = this.$vm[exp]
   }
+
+  html(node, exp) {
+    node.innerHTML = this.$vm[exp]
+  }
 }

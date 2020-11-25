@@ -2,7 +2,7 @@
  * @Author: btbrad
  * @Date: 2020-11-25 20:33:25
  * @LastEditors: btbrad
- * @LastEditTime: 2020-11-25 20:54:57
+ * @LastEditTime: 2020-11-25 21:19:26
  * @Description: 
 -->
 <!DOCTYPE html>
@@ -17,6 +17,7 @@
 
   <div id="app">
     <p>{{counter}}</p>
+    <p my-text="msg"></p>
   </div>
   
   <script src="./compile.js"></script>
@@ -25,7 +26,8 @@
     const app = new MyVue({
       el: '#app',
       data: {
-        counter: 1
+        counter: 1,
+        msg: '这是指令的文字'
       }
     })
 

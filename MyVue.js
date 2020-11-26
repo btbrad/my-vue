@@ -28,6 +28,8 @@ function defineReactive(obj, key, val) {
         val = newVal
         observe(val)
         console.log('set ' + val)
+
+        watchers.forEach(w => w.update())
       }
     }
   })
@@ -81,4 +83,19 @@ class Observer {
   }
 
   // 数组数据响应化
+}
+
+// 观察者: 保存更新函数， 值发生变化调用更新函数
+const watchers = []
+class Watcher{
+  constructor(vm, key, updateFn) {
+    this.vm = vm
+    this.key = key
+    this.updateFn = updateFn
+    watchers.push(this)
+  }
+
+  update() {
+    this.updateFn.call(this.vm, this.vm[this.key])
+  }
 }

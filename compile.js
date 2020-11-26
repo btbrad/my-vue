@@ -31,8 +31,8 @@ class Compile {
   }
 
   compileText(node) {
-    console.log(RegExp.$1)
-    node.textContent = this.$vm[RegExp.$1]
+    // node.textContent = this.$vm[RegExp.$1]
+    this.update(node, RegExp.$1, 'text')
   }
 
   compileElement(node) {
@@ -51,11 +51,31 @@ class Compile {
     return name.indexOf('my') === 0
   }
 
+  update(node, exp, dir) {
+    // 初始化
+    // 指令对应的跟新函数xxUpdater
+    const fn = this[dir + 'Updater']
+    fn && fn(node, this.$vm[exp])
+
+    // 更新处理, 封装一个更新函数，可以更新对应dom元素
+    new Watcher(this.$vm, exp, function(val) {
+      fn && fn(node, val)
+    })
+
+  }
+
+  textUpdater(node, value) {
+    node.textContent = value
+  }
+
   text(node, exp) {
-    node.textContent = this.$vm[exp]
+    this.update(node, this.$vm[exp], 'text')
   }
 
   html(node, exp) {
-    node.innerHTML = this.$vm[exp]
+    this.update(node, this.$vm[exp], 'text')
+  }
+  htmlUpdater(node, value) {
+    node.innerHTML = value
   }
 }

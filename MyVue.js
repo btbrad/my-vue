@@ -16,11 +16,16 @@ function defineReactive(obj, key, val) {
 
   observe(val)
 
+  // 传建一个Dep和当前的key一一对应
+  const dep = new Dep()
+
   Object.defineProperty(obj, key, {
     enumerable: true,
     configurable: true,
     get() {
       console.log('get ' + val)
+      // 依赖收集在这里
+      Dep.target && dep.addDep(Dep.target)
       return val
     },
     set(newVal) {
@@ -28,8 +33,9 @@ function defineReactive(obj, key, val) {
         val = newVal
         observe(val)
         console.log('set ' + val)
-
-        watchers.forEach(w => w.update())
+        // 通知更新
+        // watchers.forEach(w => w.update())
+        dep.notify()
       }
     }
   })
@@ -86,16 +92,34 @@ class Observer {
 }
 
 // 观察者: 保存更新函数， 值发生变化调用更新函数
-const watchers = []
 class Watcher{
   constructor(vm, key, updateFn) {
     this.vm = vm
     this.key = key
     this.updateFn = updateFn
-    watchers.push(this)
+
+    Dep.target = this
+    this.vm[key] // 读取触发了getter
+    Dep.target = null // 收集完就置空
   }
 
   update() {
     this.updateFn.call(this.vm, this.vm[this.key])
   }
 }
+
+// Dep: 依赖管理某个key相关的所有watcher实例
+class Dep {
+  constructor() {
+    this.deps = []
+  }
+
+  addDep(dep) {
+    this.deps.push(dep)
+  }
+
+  notify() {
+    this.deps.forEach(dep => dep.update())
+  }
+}
+

@@ -55,3 +55,80 @@ obj.b
 obj.a = 3
 obj.b = 4
 ```
+> 如果对象的值仍是对象，则需要递归遍历， 进行数据响应式操作。
+```js
+function defineReactive(obj, key, val) {
+
+  observe(val) // 如果属性值为对象，则进行递归遍历
+
+  Object.defineProperty(obj, key, {
+    enumerable: true,
+    configurable: true,
+    get() {
+      console.log('get '+ key + ' '+ val)
+      return val
+    },
+    set(newVal) {
+      if (newVal === val) {
+        return
+      }
+      val = newVal
+      console.log('set '+ key + ' '+ val)
+    }
+  })
+}
+```
+> 如果给一个非属性赋值为对象，则需要在赋值时对值进行遍历做响应式操作。
+```js
+function defineReactive(obj, key, val) {
+
+  observe(val) // 如果属性值为对象，则进行递归遍历
+
+  Object.defineProperty(obj, key, {
+    enumerable: true,
+    configurable: true,
+    get() {
+      console.log('get '+ key + ' '+ val)
+      return val
+    },
+    set(newVal) {
+      if (newVal === val) {
+        return
+      }
+      val = newVal
+
+      observe(val) // 若赋值为对象，则进行递归遍历进行响应式操作
+
+      console.log('set '+ key + ' '+ val)
+    }
+  })
+}
+```
+> 如果要给响应式操作过得对象，添加属性值，则使用一个set方法
+```js
+function set(obj, key, val) {
+  defineReactive(obj, key, val)
+}
+
+const obj = { 
+  a: 1,
+  b: {
+    c: 3
+  },
+  d: 4
+}
+
+observe(obj)
+
+obj.a
+obj.b.c
+obj.a = 111
+obj.b.c = 333
+obj.d = {
+  foo: 4
+}
+obj.d.foo = 4004
+set(obj, 'e', 5)
+// obj.e = 5
+obj.e = 6
+```

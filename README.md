@@ -132,3 +132,35 @@ set(obj, 'e', 5)
 // obj.e = 5
 obj.e = 6
 ```
+> 封装MyVue类
+```js
+class MyVue {
+  constructor(options) {
+    this.$options = options
+    this.$data = options.data
+
+    observe(this.$data)
+  }
+}
+```
+> 在页面中使用
+```html
+<div id="app">
+    <p>{{counter}}</p>
+  </div>
+
+  <script src="./myVue.js"></script>
+  <script>
+  
+    const vm = new MyVue({
+      data: {
+        counter: 0
+      }
+    })  
+
+    setInterval(() => {
+      vm.$data.counter++
+    }, 1000);
+
+  </script>
+```

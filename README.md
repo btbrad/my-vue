@@ -192,3 +192,110 @@ function proxy(vm, sourceKey) {
   })
 }
 ```
+
+### 编译compile
+#### 遍历边界el内所有节点
+```js
+class Compile{
+  constructor(vm, el) {
+    this.$vm = vm
+    this.$el = document.querySelector(el)
+
+    this.compile(this.$el)
+  }
+
+  compile(el) {
+    const childNodes = el.childNodes
+    console.log('所有节点', childNodes)
+    Array.from(childNodes).forEach(node => {
+      if (node.nodeType === 1) {
+        console.log('元素节点', node)
+      } else if (node.nodeType === 3 && /\{\{(.*)\}\}/.test(node.textContent)) {
+        console.log('文本节点', node)
+      }
+      if (node.childNodes && node.childNodes.length) {
+        this.compile(node)
+      }
+    })
+  }
+}
+
+class MyVue {
+  constructor(options) {
+    this.$options = options
+    this.$data = options.data
+
+    observe(this.$data)
+
+    proxy(this, '$data')
+
+    new Compile(this, this.$options.el)
+  }
+}
+```
+#### 编译文本节点
+```js
+compile(el) {
+  const childNodes = el.childNodes
+  console.log('所有节点', childNodes)
+  Array.from(childNodes).forEach(node => {
+    if (node.nodeType === 1) {
+      console.log('元素节点', node)
+    } else if (node.nodeType === 3 && /\{\{(.*)\}\}/.test(node.textContent)) {
+      console.log('文本节点', node)
+      this.compileText(node, this.$vm)
+    }
+    if (node.childNodes && node.childNodes.length) {
+      this.compile(node)
+    }
+  })
+}
+
+compileText(node, vm) {
+  node.textContent = vm[RegExp.$1.trim()]
+}
+```
+#### 编译指令节点
+```js
+compile(el) {
+  const childNodes = el.childNodes
+  console.log('所有节点', childNodes)
+  Array.from(childNodes).forEach(node => {
+    if (node.nodeType === 1) {
+      console.log('元素节点', node)
+      this.compileElement(node)
+    } else if (node.nodeType === 3 && /\{\{(.*)\}\}/.test(node.textContent)) {
+      console.log('文本节点', node)
+      this.compileText(node)
+    }
+    if (node.childNodes && node.childNodes.length) {
+      this.compile(node)
+    }
+  })
+}
+
+compileElement(node) {
+    const nodeAttrs = node.attributes
+    Array.from(nodeAttrs).forEach(attr => {
+      console.log(attr)
+      const attrName = attr.name
+      const exp = attr.value
+      if (this.isDirective(attrName)) {
+        const dir = attrName.substring(3)
+        this[dir] && this[dir](node, exp)
+      }
+    })
+  }
+isDirective(name) {
+  return name.indexOf('my-') === 0
+}
+
+text(node, exp) {
+  node.textContent = exp
+}
+
+html(node, exp) {
+  node.innerHTML = this.$vm[exp]
+}
+
+```

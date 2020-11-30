@@ -300,7 +300,7 @@ html(node, exp) {
 
 ```
 ### 依赖收集
-> 每读取到一个差值文本或指令，则创建一个watcher
+> 每读取到一个插值文本或指令，则创建一个watcher, 在watcher的构造函数中读取响应key值，触发getter,进行依赖收集；文本和元素的编译都同意使用update方法来初始化和更新
 ```js
 class Watcher {
   constructor(vm, key, updateFn) {
@@ -321,6 +321,29 @@ update(node, exp, dir) {
   new Watcher(this.$vm, exp, function(val) {
     fn && fn(node, val)
   })
+}
+
+compileText(node) {
+  // node.textContent = this.$vm[RegExp.$1.trim()]
+  this.update(node, RegExp.$1.trim(), 'text')
+}
+
+text(node, exp) {
+  // node.textContent = exp
+  this.update(node, exp, 'text')
+}
+
+html(node, exp) {
+  // node.innerHTML = this.$vm[exp]
+  this.update(node, exp, 'html')
+}
+
+textUpdater(node, val) {
+  node.textContent = val
+}
+  
+htmlUpdater(node, val) {
+  node.innerHTML = val
 }
 ```
 > 创建Dep, 集中管理watcher

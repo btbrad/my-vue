@@ -299,3 +299,69 @@ html(node, exp) {
 }
 
 ```
+### 依赖收集
+> 每读取到一个差值文本或指令，则创建一个watcher
+```js
+class Watcher {
+  constructor(vm, key, updateFn) {
+    this.vm = vm
+    this.key = key
+    this.updateFn = updateFn
+    watchers.push(this)
+  }
+
+  update() {
+    this.updateFn.call(this.vm, this.vm[this.key])
+  }
+}
+
+update(node, exp, dir) {
+  const fn = this[dir+'Updater']
+  fn && fn(node, this.$vm[exp])
+  new Watcher(this.$vm, exp, function(val) {
+    fn && fn(node, val)
+  })
+}
+```
+> 创建Dep, 集中管理watcher
+```js
+class Dep {
+  constructor() {
+    this.deps = []
+  }
+  addDep(dep) {
+    this.deps.push(dep)
+  }
+  notify() {
+    this.deps.forEach(w => w.update())
+  }
+}
+
+function defineReactive(obj, key, val) {
+
+  observe(val) // 如果属性值为对象，则进行递归遍历
+
+  const dep = new Dep()
+
+  Object.defineProperty(obj, key, {
+    enumerable: true,
+    configurable: true,
+    get() {
+      console.log('get '+ key + ' '+ val)
+      Dep.target && dep.addDep(Dep.target)
+      return val
+    },
+    set(newVal) {
+      if (newVal === val) {
+        return
+      }
+      val = newVal
+
+      observe(val) // 若赋值为对象，则进行递归遍历进行响应式操作
+
+      console.log('set '+ key + ' '+ val)
+      dep.notify()
+    }
+  })
+}
+```

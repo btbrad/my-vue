@@ -164,3 +164,31 @@ class MyVue {
 
   </script>
 ```
+> 为了操作数据方便， 把data中的数据代理到myvue实例上
+```js
+class MyVue {
+  constructor(options) {
+    this.$options = options
+    this.$data = options.data
+    // 数据响应式
+    observe(this.$data)
+    // 数据代理
+    proxy(this, '$data')
+  }
+}
+
+function proxy(vm, sourceKey) {
+  Object.keys(vm[sourceKey]).forEach(key => {
+    Object.defineProperty(vm, key, {
+      enumerable: true,
+      configurable: true,
+      get() {
+        return vm[sourceKey][key]
+      },
+      set(newVal) {
+        vm[sourceKey][key] = newVal
+      }
+    })
+  })
+}
+```

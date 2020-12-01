@@ -12,8 +12,15 @@ class MyVue{
   }
 }
 
+/**
+ * 定义响应式
+ * @param {*} obj 对象
+ * @param {*} key 键值
+ * @param {*} val 属性值
+ */
 function defineReactive(obj, key, val) {
 
+  // 若属性值为对象，则递归值进行响应式操作
   observe(val)
 
   // 传建一个Dep和当前的key一一对应
@@ -41,6 +48,11 @@ function defineReactive(obj, key, val) {
   })
 }
 
+/**
+ * 
+ * @param {*} obj 对象
+ * @param {*} sourceKey 数据属性key
+ */
 // 数据代理
 function proxy(obj, sourceKey) {
   Object.keys(obj[sourceKey]).forEach(key => {
@@ -65,6 +77,12 @@ function observe(obj) {
   new Observer(obj)
 }
 
+/**
+ * 在声明后，额外添加响应式属性
+ * @param {*} obj 
+ * @param {*} key 
+ * @param {*} val 
+ */
 function set(obj, key, val) {
   defineReactive(obj, key, val)
 }

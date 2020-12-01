@@ -146,23 +146,23 @@ class MyVue {
 > 在页面中使用
 ```html
 <div id="app">
-    <p>{{counter}}</p>
-  </div>
+  <p>{{counter}}</p>
+</div>
 
-  <script src="./myVue.js"></script>
-  <script>
-  
-    const vm = new MyVue({
-      data: {
-        counter: 0
-      }
-    })  
+<script src="./myVue.js"></script>
+<script>
 
-    setInterval(() => {
-      vm.$data.counter++
-    }, 1000);
+  const vm = new MyVue({
+    data: {
+      counter: 0
+    }
+  })  
 
-  </script>
+  setInterval(() => {
+    vm.$data.counter++
+  }, 1000);
+
+</script>
 ```
 > 为了操作数据方便， 把data中的数据代理到myvue实例上
 ```js
@@ -300,7 +300,7 @@ html(node, exp) {
 
 ```
 ### 依赖收集
-> 每读取到一个插值文本或指令，则创建一个watcher, 在watcher的构造函数中读取响应key值，触发getter,进行依赖收集；文本和元素的编译都同意使用update方法来初始化和更新
+> 每读取到一个插值文本或指令，则创建一个watcher, 在watcher的构造函数中读取响应key值，触发getter,进行依赖收集；文本和元素的编译都统一使用update方法来初始化和更新
 ```js
 class Watcher {
   constructor(vm, key, updateFn) {

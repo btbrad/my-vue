@@ -443,3 +443,32 @@ class Observer {
   }
 }
 ```
+
+### 处理事件
+```js
+compileElement(node) {
+  const nodeAttrs = node.attributes
+  Array.from(nodeAttrs).forEach(attr => {
+    const attrName = attr.name
+    const exp = attr.value
+    if (this.isDirective(attrName)) {
+      const dir = attrName.substring(3)
+      this[dir] && this[dir](node, exp)
+    }
+    // 处理事件
+    if (this.isEvent(attrName)) {
+      const dir = attrName.substring(1)
+      this.eventHandler(node, dir, exp)
+    }
+  })
+}
+
+isEvent(name) {
+  return name.startsWith('@')
+}
+
+eventHandler(node, eventName, exp) {
+  const fn = this.$vm.$options.methods[exp]
+  node.addEventListener(eventName, fn.bind(this))
+}
+```

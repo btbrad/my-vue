@@ -19,6 +19,7 @@
     <p>{{counter}}</p>
     <p my-text="msg"></p>
     <p my-html="html"></p>
+    <button @click="handleClick">点击</button>
   </div>
   
   <script src="./compile.js"></script>
@@ -31,6 +32,11 @@
         msg: '这是指令的文字',
         html: '<span style="color: red;">html指令</span>',
         arr: []
+      },
+      methods: {
+        handleClick() {
+          window.alert('点击了')
+        }
       }
     })
 

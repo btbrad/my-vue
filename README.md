@@ -388,3 +388,58 @@ function defineReactive(obj, key, val) {
   })
 }
 ```
+
+### 数组响应式
+- 找到数组原型
+- 覆盖那些能够修改数组的更新方法，使其可以通知更新
+- 将得到的新的原型设置到数组实例原型上
+```js
+const originalProto = Array.prototype
+const arrayProto = Object.create(originalProto)
+const methodsToPatch = [
+  'push',
+  'pop',
+  'shift',
+  'unshift',
+  'splice',
+  'sort',
+  'reverse'
+]
+methodsToPatch.forEach(method => {
+  arrayProto[method] = function () {
+    originalProto[method].apply(this, arguments)
+    console.log('数组执行' + method + '操作')
+  }
+})
+
+// 根据对象的类型决定如何做响应化
+class Observer {
+  constructor(value) {
+    this.value
+
+    // 判断其类型
+    if (Array.isArray(value)) {
+      this.handleArray(value)
+    }
+    if (typeof value === 'object') {
+      this.walk(value)
+    }
+  }
+
+  // 对象数据响应化
+  walk(obj) {
+    Object.keys(obj).forEach(key => {
+      defineReactive(obj, key, obj[key])
+    })
+  }
+
+  // 数组数据响应化
+  handleArray(arr) {
+    arr.__proto__ = arrayProto
+    const keys = Object.keys(arr)
+    for (let i = 0; i < keys.length; i++) {
+       new Observer(arr[i])     
+    }
+  }
+}
+```

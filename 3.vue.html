@@ -29,12 +29,14 @@
       data: {
         counter: 1,
         msg: '这是指令的文字',
-        html: '<span style="color: red;">html指令</span>'
+        html: '<span style="color: red;">html指令</span>',
+        arr: []
       }
     })
 
     setInterval(() => {
-      app.counter++
+      app.counter++,
+      app.arr.push(1)
     }, 1000)
   </script>
 </body>

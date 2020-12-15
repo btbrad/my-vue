@@ -1,3 +1,22 @@
+// 处理数组
+const originalProto = Array.prototype
+const arrayProto = Object.create(originalProto)
+const methodsToPatch = [
+  'push',
+  'pop',
+  'shift',
+  'unshift',
+  'splice',
+  'sort',
+  'reverse'
+]
+methodsToPatch.forEach(method => {
+  arrayProto[method] = function () {
+    originalProto[method].apply(this, arguments)
+    console.log('数组执行' + method + '操作')
+  }
+})
+
 class MyVue{
   constructor(options) {
     this.$options = options
@@ -93,10 +112,12 @@ class Observer {
     this.value
 
     // 判断其类型
+    if (Array.isArray(value)) {
+      this.handleArray(value)
+    }
     if (typeof value === 'object') {
       this.walk(value)
     }
-
   }
 
   // 对象数据响应化
@@ -107,6 +128,13 @@ class Observer {
   }
 
   // 数组数据响应化
+  handleArray(arr) {
+    arr.__proto__ = arrayProto
+    const keys = Object.keys(arr)
+    for (let i = 0; i < keys.length; i++) {
+       new Observer(arr[i])     
+    }
+  }
 }
 
 // 观察者: 保存更新函数， 值发生变化调用更新函数

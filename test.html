@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  
+  <div id="app">
+    <p>{{ counter }}</p>
+    <p my-text="msg"></p>
+    <p my-html="html"></p>
+  </div>
+
+  <script src="./compileTest.js"></script>
+  <script src="./test.js"></script>
+  <script>
+  
+    const vm = new MyVue({
+      el: '#app',
+      data: {
+        counter: 0,
+        msg: '文本指令',
+        html: '<span style="color:red;">HTML文本</span>'
+      }
+    })  
+
+    setInterval(() => {
+      vm.counter++
+    }, 1000);
+
+  </script>
+</body>
+</html>

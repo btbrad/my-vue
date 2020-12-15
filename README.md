@@ -472,3 +472,17 @@ eventHandler(node, eventName, exp) {
   node.addEventListener(eventName, fn.bind(this))
 }
 ```
+
+### 编译v-model
+```js
+model(node, exp) {
+  this.update(node, exp, 'model')
+
+  node.addEventListener('input', e => {
+    this.$vm[exp] = e.target.value
+  })
+}
+modelUpdater(node, value) {
+  node.value = value
+}
+```

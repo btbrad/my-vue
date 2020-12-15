@@ -83,13 +83,24 @@ class Compile {
   }
 
   text(node, exp) {
-    this.update(node, this.$vm[exp], 'text')
+    this.update(node, exp, 'text')
   }
 
   html(node, exp) {
-    this.update(node, this.$vm[exp], 'text')
+    this.update(node, exp, 'html')
   }
   htmlUpdater(node, value) {
     node.innerHTML = value
+  }
+
+  model(node, exp) {
+    this.update(node, exp, 'model')
+
+    node.addEventListener('input', e => {
+      this.$vm[exp] = e.target.value
+    })
+  }
+  modelUpdater(node, value) {
+    node.value = value
   }
 }
